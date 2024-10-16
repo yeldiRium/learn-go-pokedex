@@ -5,17 +5,17 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/yeldiRium/learning-go-pokedex/repl/commands"
+	"github.com/yeldiRium/learning-go-pokedex/commands"
 )
 
-func StartRepl(input io.Reader) {
+func StartRepl(input io.Reader, cliCommands map[string]commands.CliCommand) {
 	scanner := bufio.NewScanner(input)
 	for {
 		fmt.Print("pokedex > ")
 		scanner.Scan()
 		input := scanner.Text()
 
-		command, exists := commands.GetCommands()[input]
+		command, exists := cliCommands[input]
 		if !exists {
 			continue
 		}
