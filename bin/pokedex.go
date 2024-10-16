@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"os"
 
 	"github.com/yeldiRium/learning-go-pokedex/commands"
@@ -8,7 +9,8 @@ import (
 )
 
 func main() {
+	ctx := context.Background()
 	input := os.Stdin
 	cliCommands := commands.GetCommands()
-	repl.StartRepl(input, cliCommands)
+	repl.StartRepl(ctx, input, cliCommands)
 }

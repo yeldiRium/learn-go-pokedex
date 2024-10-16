@@ -2,24 +2,38 @@ package repl
 
 import (
 	"bufio"
+	"context"
 	"fmt"
 	"io"
 
 	"github.com/yeldiRium/learning-go-pokedex/commands"
 )
 
-func StartRepl(input io.Reader, cliCommands map[string]commands.CliCommand) {
+func scanReader(input io.Reader, lines chan string) {
 	scanner := bufio.NewScanner(input)
+	for scanner.Scan() {
+		lines <- scanner.Text()
+	}
+	close(lines)
+}
+
+func StartRepl(ctx context.Context, input io.Reader, cliCommands map[string]commands.CliCommand) {
+	lines := make(chan string)
+	go scanReader(input, lines)
+
 	for {
-		fmt.Print("pokedex > ")
-		scanner.Scan()
-		input := scanner.Text()
+		fmt.Printf("pokedex > ")
 
-		command, exists := cliCommands[input]
-		if !exists {
-			continue
+		select {
+		case <-ctx.Done():
+			return
+		case line := <-lines:
+			command, exists := cliCommands[line]
+			if !exists {
+				continue
+			}
+
+			command.Handler()
 		}
-
-		command.Handler()
 	}
 }
