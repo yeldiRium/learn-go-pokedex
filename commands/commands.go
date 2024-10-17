@@ -28,6 +28,11 @@ func GetCommands() map[string]CliCommand {
 			Description: "Explore an area",
 			Handler:     ExploreCommand,
 		},
+		"catch": {
+			Name:        "catch <pokemon>",
+			Description: "Try to catch a pokemon!",
+			Handler:     CatchPokemonCommand,
+		},
 		"exit": {
 			Name:        "exit",
 			Description: "Exit the pokedex.",

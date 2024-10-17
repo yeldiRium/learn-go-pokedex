@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/yeldiRium/learning-go-pokedex/model"
 	"github.com/yeldiRium/learning-go-pokedex/pokeapi"
 	"github.com/yeldiRium/learning-go-pokedex/pokecache"
 )
@@ -16,6 +17,7 @@ type CliConfig struct {
 	output     io.Writer
 	httpClient HttpClient
 	cache      pokecache.Cache
+	pokedex    map[string]model.Pokemon
 
 	nextMapUrl     *string
 	previousMapUrl *string
@@ -26,6 +28,8 @@ func NewCliConfig() *CliConfig {
 	return &CliConfig{
 		output:     os.Stdout,
 		httpClient: http.DefaultClient,
+		pokedex:    make(map[string]model.Pokemon),
+
 		nextMapUrl: &nextUrl,
 	}
 }
