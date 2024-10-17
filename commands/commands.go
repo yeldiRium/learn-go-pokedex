@@ -18,6 +18,11 @@ func GetCommands() map[string]CliCommand {
 			Description: "Show the next area of the map.",
 			Handler:     MapCommand,
 		},
+		"mapb": {
+			Name:        "mapb",
+			Description: "Shows the previous area of the map.",
+			Handler:     MapbCommand,
+		},
 		"exit": {
 			Name:        "exit",
 			Description: "Exit the pokedex.",

@@ -38,8 +38,8 @@ func TestMapCommand(t *testing.T) {
 		err := commands.MapCommand(config)
 		assert.NoErrorf(t, err, "map command should not have returned an error")
 
-		assert.Equal(t, client.wasCalledWithUrls, []string{"https://pokeapi.co/api/v2/location-area/?limit=20"})
-		assert.Equal(t, buf.String(), "area1\narea2\n")
+		assert.Equal(t, []string{"https://pokeapi.co/api/v2/location-area/?limit=20"}, client.wasCalledWithUrls)
+		assert.Equal(t, "area1\narea2\n", buf.String())
 	})
 
 	t.Run("requests the next page", func(t *testing.T) {
@@ -53,7 +53,7 @@ func TestMapCommand(t *testing.T) {
 		err := commands.MapCommand(config)
 		assert.NoErrorf(t, err, "map command should not have returned an error")
 
-		assert.Equal(t, client.wasCalledWithUrls, []string{"https://pokeapi.co/api/v2/location-area/?limit=20", "http://test-next-url/"})
+		assert.Equal(t, []string{"https://pokeapi.co/api/v2/location-area/?limit=20", "http://test-next-url/"}, client.wasCalledWithUrls)
 	})
 
 	t.Run("returns an error if the request failed", func(t *testing.T) {
@@ -78,7 +78,7 @@ func TestMapCommand(t *testing.T) {
 		assert.ErrorIs(t, err, commands.ErrNextMapRequestFailed)
 	})
 
-	t.Run("stays at the same point in the list, when it is reached", func(t *testing.T) {
+	t.Run("stays at the same point in the list, when the end is reached", func(t *testing.T) {
 		client := mockHttpClient{
 			shouldReturn: []byte(`{"results": [{"name": "area1"}, {"name": "area2"}]}`),
 		}
@@ -89,6 +89,6 @@ func TestMapCommand(t *testing.T) {
 		commands.MapCommand(config)
 		commands.MapCommand(config)
 		assert.Len(t, client.wasCalledWithUrls, 2)
-		assert.Equal(t, client.wasCalledWithUrls, []string{"https://current-map-url/", "https://current-map-url/"})
+		assert.Equal(t, []string{"https://current-map-url/", "https://current-map-url/"}, client.wasCalledWithUrls)
 	})
 }
