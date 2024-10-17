@@ -33,6 +33,7 @@ func cleanInput(input string) (words []string) {
 }
 
 func StartRepl(ctx context.Context, input io.Reader, cliCommands map[string]commands.CliCommand) {
+	cliState := commands.NewCliConfig()
 	lines := make(chan string)
 	go scanReader(input, lines)
 
@@ -60,7 +61,7 @@ func StartRepl(ctx context.Context, input io.Reader, cliCommands map[string]comm
 				continue
 			}
 
-			cliCommand.Handler()
+			cliCommand.Handler(cliState)
 		}
 	}
 }

@@ -2,12 +2,12 @@ package commands
 
 import "fmt"
 
-func helpCommand() error {
-	fmt.Println("Welcome to the pokedex!")
-	fmt.Println("Usage:")
-	fmt.Println()
+func helpCommand(config *CliConfig) error {
+	fmt.Fprintln(config.output, "Welcome to the pokedex!")
+	fmt.Fprintln(config.output, "Usage:")
+	fmt.Fprintln(config.output)
 	for _, command := range GetCommands() {
-		fmt.Printf("  %s: %s\n", command.Name, command.Description)
+		fmt.Fprintf(config.output, "  %s: %s\n", command.Name, command.Description)
 	}
 	return nil
 }

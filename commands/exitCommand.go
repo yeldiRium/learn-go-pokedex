@@ -2,7 +2,7 @@ package commands
 
 import "os"
 
-func exitCommand() error {
+func exitCommand(_ *CliConfig) error {
 	os.Exit(0)
 	return nil
 }
