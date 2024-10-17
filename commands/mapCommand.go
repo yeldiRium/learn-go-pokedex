@@ -9,25 +9,25 @@ import (
 
 var ErrNextMapRequestFailed = errors.New("failed to request next map section")
 
-func MapCommand(state *CliConfig) error {
+func MapCommand(config *CliConfig) error {
 	var result *pokeapi.AreaListResult
 	var err error
-	if state.nextMapUrl != nil {
-		result, err = pokeapi.GetAreaListWithUrl(state.httpClient, *state.nextMapUrl)
+	if config.nextMapUrl != nil {
+		result, err = pokeapi.GetAreaListWithUrl(config.httpClient, *config.nextMapUrl)
 	} else {
-		result, err = pokeapi.GetAreaList(state.httpClient)
+		result, err = pokeapi.GetAreaList(config.httpClient)
 	}
 	if err != nil {
 		return fmt.Errorf("%w: %w", ErrNextMapRequestFailed, err)
 	}
 
 	if result.NextAreaUrl != nil {
-		state.nextMapUrl = result.NextAreaUrl
-		state.previousMapUrl = result.PreviousAreaUrl
+		config.nextMapUrl = result.NextAreaUrl
+		config.previousMapUrl = result.PreviousAreaUrl
 	}
 
 	for _, area := range result.Areas {
-		fmt.Fprintln(state.output, area.Name)
+		fmt.Fprintln(config.output, area.Name)
 	}
 
 	return nil
