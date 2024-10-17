@@ -27,7 +27,11 @@ func StartRepl(ctx context.Context, input io.Reader, cliCommands map[string]comm
 		select {
 		case <-ctx.Done():
 			return
-		case line := <-lines:
+		case line, ok := <-lines:
+			if !ok {
+				return
+			}
+
 			command, exists := cliCommands[line]
 			if !exists {
 				continue
