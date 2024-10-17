@@ -4,6 +4,8 @@ import (
 	"io"
 	"net/http"
 	"os"
+
+	"github.com/yeldiRium/learning-go-pokedex/pokeapi"
 )
 
 type HttpClient interface {
@@ -18,9 +20,11 @@ type CliConfig struct {
 }
 
 func NewCliConfig() *CliConfig {
+	nextUrl := pokeapi.BaseAreaListUrl
 	return &CliConfig{
 		output:     os.Stdout,
 		httpClient: http.DefaultClient,
+		nextMapUrl: &nextUrl,
 	}
 }
 

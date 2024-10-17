@@ -78,7 +78,7 @@ func TestMapCommand(t *testing.T) {
 		assert.ErrorIs(t, err, commands.ErrNextMapRequestFailed)
 	})
 
-	t.Run("stays at the same point in the list, when the end is reached", func(t *testing.T) {
+	t.Run("returns an error when it can't go further", func(t *testing.T) {
 		client := mockHttpClient{
 			shouldReturn: []byte(`{"results": [{"name": "area1"}, {"name": "area2"}]}`),
 		}
@@ -87,8 +87,7 @@ func TestMapCommand(t *testing.T) {
 			WithNextMapUrl("https://current-map-url/")
 
 		commands.MapCommand(config)
-		commands.MapCommand(config)
-		assert.Len(t, client.wasCalledWithUrls, 2)
-		assert.Equal(t, []string{"https://current-map-url/", "https://current-map-url/"}, client.wasCalledWithUrls)
+		err := commands.MapCommand(config)
+		assert.ErrorIs(t, err, commands.ErrEndOfAreasReached)
 	})
 }

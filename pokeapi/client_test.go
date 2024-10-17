@@ -27,7 +27,7 @@ func (c *mockHttpClient) Do(req *http.Request) (*http.Response, error) {
 
 func TestGetAreaList(t *testing.T) {
 	t.Run("returns an error if the given URL is invalid", func(t *testing.T) {
-		_, err := pokeapi.GetAreaListWithUrl(http.DefaultClient, "::/-_([>&}invalid-urld>-_[}]")
+		_, err := pokeapi.GetAreaList(http.DefaultClient, "::/-_([>&}invalid-urld>-_[}]")
 		assert.ErrorIs(t, err, pokeapi.ErrAreaListRequestInvalid)
 	})
 
@@ -36,7 +36,7 @@ func TestGetAreaList(t *testing.T) {
 			shouldError: fmt.Errorf("test error"),
 		}
 
-		_, err := pokeapi.GetAreaList(&client)
+		_, err := pokeapi.GetAreaList(&client, "http://test-url/")
 		assert.ErrorIs(t, err, pokeapi.ErrAreaListRequestFailed)
 	})
 
@@ -45,7 +45,7 @@ func TestGetAreaList(t *testing.T) {
 			shouldReturn: []byte("invalid-json"),
 		}
 
-		_, err := pokeapi.GetAreaList(&client)
+		_, err := pokeapi.GetAreaList(&client, "http://test-url/")
 		assert.ErrorIs(t, err, pokeapi.ErrAreaListRequestFailed)
 	})
 }

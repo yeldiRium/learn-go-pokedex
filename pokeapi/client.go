@@ -34,11 +34,7 @@ type areaListApiResponse struct {
 	} `json:"results"`
 }
 
-func GetAreaList(httpClient HttpClient) (*AreaListResult, error) {
-	return GetAreaListWithUrl(httpClient, BaseAreaListUrl)
-}
-
-func GetAreaListWithUrl(httpClient HttpClient, areaUrl string) (*AreaListResult, error) {
+func GetAreaList(httpClient HttpClient, areaUrl string) (*AreaListResult, error) {
 	request, err := http.NewRequest("GET", areaUrl, nil)
 	if err != nil {
 		return nil, fmt.Errorf("%w: %w", ErrAreaListRequestInvalid, err)

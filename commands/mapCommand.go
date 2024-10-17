@@ -8,23 +8,20 @@ import (
 )
 
 var ErrNextMapRequestFailed = errors.New("failed to request next map section")
+var ErrEndOfAreasReached = errors.New("end of areas reached, can't go further")
 
 func MapCommand(config *CliConfig) error {
-	var result *pokeapi.AreaListResult
-	var err error
-	if config.nextMapUrl != nil {
-		result, err = pokeapi.GetAreaListWithUrl(config.httpClient, *config.nextMapUrl)
-	} else {
-		result, err = pokeapi.GetAreaList(config.httpClient)
+	if config.nextMapUrl == nil {
+		return ErrEndOfAreasReached
 	}
+
+	result, err := pokeapi.GetAreaList(config.httpClient, *config.nextMapUrl)
 	if err != nil {
 		return fmt.Errorf("%w: %w", ErrNextMapRequestFailed, err)
 	}
 
-	if result.NextAreaUrl != nil {
-		config.nextMapUrl = result.NextAreaUrl
-		config.previousMapUrl = result.PreviousAreaUrl
-	}
+	config.nextMapUrl = result.NextAreaUrl
+	config.previousMapUrl = result.PreviousAreaUrl
 
 	for _, area := range result.Areas {
 		fmt.Fprintln(config.output, area.Name)
