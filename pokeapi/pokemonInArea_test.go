@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/yeldiRium/learning-go-pokedex/model"
 	"github.com/yeldiRium/learning-go-pokedex/pokeapi"
 	"github.com/yeldiRium/learning-go-pokedex/pokecache"
 )
@@ -18,7 +19,10 @@ func TestGetPokemonInArea(t *testing.T) {
 		cache := pokecache.Cache{}
 		result, err := pokeapi.GetPokemonInArea(&client, cache, "some area")
 		assert.NoError(t, err)
-		assert.Equal(t, []string{"pokemon-1", "pokemon-2"}, result)
+		assert.Equal(t, model.PokemonEncounters{
+			model.PokemonEncounter{Name: "pokemon-1"},
+			model.PokemonEncounter{Name: "pokemon-2"},
+		}, result)
 	})
 
 	t.Run("returns an error if the area does not exist", func(t *testing.T) {
@@ -27,6 +31,7 @@ func TestGetPokemonInArea(t *testing.T) {
 		}
 		cache := pokecache.Cache{}
 		_, err := pokeapi.GetPokemonInArea(&client, cache, "invalid-area")
+		assert.ErrorIs(t, err, pokeapi.ErrGetPokemonInArea)
 		assert.ErrorIs(t, err, pokeapi.ErrAreaDoesntExist)
 	})
 
@@ -37,7 +42,8 @@ func TestGetPokemonInArea(t *testing.T) {
 		cache := pokecache.Cache{}
 
 		_, err := pokeapi.GetPokemonInArea(&client, cache, "some area")
-		assert.ErrorIs(t, err, pokeapi.ErrPokemonInAreaRequestFailed)
+		assert.ErrorIs(t, err, pokeapi.ErrGetPokemonInArea)
+		assert.ErrorIs(t, err, pokeapi.ErrRequestFailed)
 	})
 
 	t.Run("returns an error if the response can not be parsed", func(t *testing.T) {
@@ -47,6 +53,7 @@ func TestGetPokemonInArea(t *testing.T) {
 		cache := pokecache.Cache{}
 
 		_, err := pokeapi.GetPokemonInArea(&client, cache, "some area")
-		assert.ErrorIs(t, err, pokeapi.ErrPokemonInAreaRequestFailed)
+		assert.ErrorIs(t, err, pokeapi.ErrGetPokemonInArea)
+		assert.ErrorIs(t, err, pokeapi.ErrRequestFailed)
 	})
 }

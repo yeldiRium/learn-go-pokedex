@@ -7,21 +7,18 @@ import (
 	"io"
 	"net/http"
 
+	"github.com/yeldiRium/learning-go-pokedex/model"
 	"github.com/yeldiRium/learning-go-pokedex/pokecache"
 )
 
-var ErrAreaListRequestInvalid = errors.New("failed to create area list request")
-var ErrAreaListRequestFailed = errors.New("failed to request area list section")
+var ErrGetAreaList = errors.New("GetAreaList")
 
 const BaseAreaListUrl = "https://pokeapi.co/api/v2/location-area/?limit=20"
 
-type Area struct {
-	Name string
-}
 type AreaListResult struct {
 	NextAreaUrl     *string
 	PreviousAreaUrl *string
-	Areas           []Area
+	Areas           model.Areas
 }
 
 type areaListApiResponse struct {
@@ -37,17 +34,17 @@ func GetAreaList(httpClient HttpClient, cache pokecache.Cache, areaUrl string) (
 	if !ok {
 		request, err := http.NewRequest("GET", areaUrl, nil)
 		if err != nil {
-			return nil, fmt.Errorf("%w: %w", ErrAreaListRequestInvalid, err)
+			return nil, fmt.Errorf("%w: %w: %w", ErrGetAreaList, ErrRequestInvalid, err)
 		}
 		response, err := httpClient.Do(request)
 		if err != nil {
-			return nil, fmt.Errorf("%w: %w", ErrAreaListRequestFailed, err)
+			return nil, fmt.Errorf("%w: %w: %w", ErrGetAreaList, ErrRequestFailed, err)
 		}
 
 		defer response.Body.Close()
 		body, err := io.ReadAll(response.Body)
 		if err != nil {
-			return nil, fmt.Errorf("%w: %w", ErrAreaListRequestFailed, err)
+			return nil, fmt.Errorf("%w: %w: %w", ErrGetAreaList, ErrRequestFailed, err)
 		}
 
 		responseBody = body
@@ -56,12 +53,12 @@ func GetAreaList(httpClient HttpClient, cache pokecache.Cache, areaUrl string) (
 	var apiResponse areaListApiResponse
 	err := json.Unmarshal(responseBody, &apiResponse)
 	if err != nil {
-		return nil, fmt.Errorf("%w: %w", ErrAreaListRequestFailed, err)
+		return nil, fmt.Errorf("%w: %w: %w", ErrGetAreaList, ErrRequestFailed, err)
 	}
 
-	areas := make([]Area, len(apiResponse.Results))
+	areas := make(model.Areas, len(apiResponse.Results))
 	for i, area := range apiResponse.Results {
-		areas[i] = Area{
+		areas[i] = model.Area{
 			Name: area.Name,
 		}
 	}

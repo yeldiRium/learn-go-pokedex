@@ -7,12 +7,11 @@ import (
 	"io"
 	"net/http"
 
+	"github.com/yeldiRium/learning-go-pokedex/model"
 	"github.com/yeldiRium/learning-go-pokedex/pokecache"
 )
 
-var ErrAreaUnknown = errors.New("area unknown")
-var ErrPokemonInAreaRequestInvalid = errors.New("failed to create request for pokemon in area")
-var ErrPokemonInAreaRequestFailed = errors.New("failed to request pokemon in area")
+var ErrGetPokemonInArea = errors.New("GetPokemonInArea")
 var ErrAreaDoesntExist = errors.New("area does not exist")
 
 const BasePokemonInAreaUrl = "https://pokeapi.co/api/v2/location-area/"
@@ -27,27 +26,27 @@ type pokemonInAreaApiResponse struct {
 	PokemonEncounters []pokemonEncounter `json:"pokemon_encounters"`
 }
 
-func GetPokemonInArea(httpClient HttpClient, cache pokecache.Cache, areaName string) ([]string, error) {
+func GetPokemonInArea(httpClient HttpClient, cache pokecache.Cache, areaName string) (model.PokemonEncounters, error) {
 	url := fmt.Sprintf("%s%s/", BasePokemonInAreaUrl, areaName)
 
 	responseBody, ok := cache.GetEntry(url)
 	if !ok {
 		request, err := http.NewRequest("GET", url, nil)
 		if err != nil {
-			return nil, fmt.Errorf("%w: %w", ErrPokemonInAreaRequestInvalid, err)
+			return nil, fmt.Errorf("%w: %w: %w", ErrGetPokemonInArea, ErrRequestInvalid, err)
 		}
 		response, err := httpClient.Do(request)
 		if err != nil {
-			return nil, fmt.Errorf("%w: %w", ErrPokemonInAreaRequestFailed, err)
+			return nil, fmt.Errorf("%w: %w: %w", ErrGetPokemonInArea, ErrRequestFailed, err)
 		}
 		if response.StatusCode == http.StatusNotFound {
-			return nil, ErrAreaDoesntExist
+			return nil, fmt.Errorf("%w: %w: %s", ErrGetPokemonInArea, ErrAreaDoesntExist, areaName)
 		}
 
 		defer response.Body.Close()
 		body, err := io.ReadAll(response.Body)
 		if err != nil {
-			return nil, fmt.Errorf("%w: %w", ErrPokemonInAreaRequestFailed, err)
+			return nil, fmt.Errorf("%w: %w: %w", ErrGetPokemonInArea, ErrRequestFailed, err)
 		}
 
 		responseBody = body
@@ -56,12 +55,14 @@ func GetPokemonInArea(httpClient HttpClient, cache pokecache.Cache, areaName str
 	var apiResponse pokemonInAreaApiResponse
 	err := json.Unmarshal(responseBody, &apiResponse)
 	if err != nil {
-		return nil, fmt.Errorf("%w: %w", ErrPokemonInAreaRequestFailed, err)
+		return nil, fmt.Errorf("%w: %w: %w", ErrGetPokemonInArea, ErrRequestFailed, err)
 	}
 
-	foundPokemon := make([]string, len(apiResponse.PokemonEncounters))
+	foundPokemon := make(model.PokemonEncounters, len(apiResponse.PokemonEncounters))
 	for i, encounter := range apiResponse.PokemonEncounters {
-		foundPokemon[i] = encounter.Pokemon.Name
+		foundPokemon[i] = model.PokemonEncounter{
+			Name: encounter.Pokemon.Name,
+		}
 	}
 
 	return foundPokemon, nil
