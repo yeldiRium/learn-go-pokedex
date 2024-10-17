@@ -33,6 +33,11 @@ func GetCommands() map[string]CliCommand {
 			Description: "Try to catch a pokemon!",
 			Handler:     CatchPokemonCommand,
 		},
+		"inspect": {
+			Name:        "inspect <pokemon>",
+			Description: "Look at your pokedex entry for a pokemon.",
+			Handler:     InspectCommand,
+		},
 		"exit": {
 			Name:        "exit",
 			Description: "Exit the pokedex.",
