@@ -84,4 +84,18 @@ func TestMapCommand(t *testing.T) {
 		err := commands.MapCommand(config)
 		assert.ErrorIs(t, err, commands.ErrNextMapRequestFailed)
 	})
+
+	t.Run("stays at the same point in the list, when it is reached", func(t *testing.T) {
+		client := mockHttpClient{
+			shouldReturn: []byte(`{"results": [{"name": "area1"}, {"name": "area2"}]}`),
+		}
+		config := commands.NewCliConfig().
+			WithHttpClient(&client).
+			WithNextMapUrl("https://current-map-url/")
+
+		commands.MapCommand(config)
+		commands.MapCommand(config)
+		assert.Len(t, client.wasCalledWithUrls, 2)
+		assert.Equal(t, client.wasCalledWithUrls, []string{"https://current-map-url/", "https://current-map-url/"})
+	})
 }

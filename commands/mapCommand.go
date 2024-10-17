@@ -48,8 +48,10 @@ func MapCommand(state *CliConfig) error {
 		return fmt.Errorf("%w: %w", ErrNextMapRequestFailed, err)
 	}
 
-	state.nextMapUrl = mapResponse.Next
-	state.previousMapUrl = mapResponse.Previous
+	if mapResponse.Next != nil {
+		state.nextMapUrl = mapResponse.Next
+		state.previousMapUrl = mapResponse.Previous
+	}
 
 	for _, area := range mapResponse.Results {
 		fmt.Fprintln(state.output, area.Name)
