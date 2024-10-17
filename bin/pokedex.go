@@ -11,6 +11,7 @@ import (
 func main() {
 	ctx := context.Background()
 	input := os.Stdin
+	output := os.Stdout
 	cliCommands := commands.GetCommands()
-	repl.StartRepl(ctx, input, cliCommands)
+	repl.StartRepl(ctx, input, output, cliCommands)
 }

@@ -32,13 +32,13 @@ func cleanInput(input string) (words []string) {
 	return outputWithoutEmptyWords
 }
 
-func StartRepl(ctx context.Context, input io.Reader, cliCommands map[string]commands.CliCommand) {
+func StartRepl(ctx context.Context, input io.Reader, output io.Writer, cliCommands map[string]commands.CliCommand) {
 	cliState := commands.NewCliConfig()
 	lines := make(chan string)
 	go scanReader(input, lines)
 
 	for {
-		fmt.Printf("pokedex > ")
+		fmt.Fprintf(output, "pokedex > ")
 
 		select {
 		case <-ctx.Done():
@@ -61,7 +61,10 @@ func StartRepl(ctx context.Context, input io.Reader, cliCommands map[string]comm
 				continue
 			}
 
-			cliCommand.Handler(cliState)
+			err := cliCommand.Handler(cliState)
+			if err != nil {
+				fmt.Fprintf(output, "error: %s\n", err)
+			}
 		}
 	}
 }

@@ -3,6 +3,8 @@ package repl
 import (
 	"bytes"
 	"context"
+	"errors"
+	"io"
 	"testing"
 	"time"
 
@@ -27,7 +29,8 @@ func TestStartRepl(t *testing.T) {
 		}
 
 		input := bytes.NewBufferString("test\n")
-		go StartRepl(ctx, input, cliCommands)
+		output := new(bytes.Buffer)
+		go StartRepl(ctx, input, output, cliCommands)
 
 		assert.Eventually(t, func() bool {
 			return handlerCalled == true
@@ -49,11 +52,33 @@ func TestStartRepl(t *testing.T) {
 		}
 
 		input := bytes.NewBufferString("unknown\n")
-		go StartRepl(ctx, input, cliCommands)
+		output := new(bytes.Buffer)
+		go StartRepl(ctx, input, output, cliCommands)
 
 		assert.Never(t, func() bool {
 			return handlerCalled == true
 		}, 100*time.Millisecond, 20*time.Millisecond, "Handler was executed, but should not have been.")
+	})
+
+	t.Run("displays error returned by handler", func(t *testing.T) {
+		ctx, cancel := context.WithCancel(context.Background())
+		defer cancel()
+
+		cliCommands := map[string]commands.CliCommand{
+			"test": {
+				Handler: func(_ *commands.CliConfig) error {
+					return errors.New("test error")
+				},
+			},
+		}
+
+		input := bytes.NewBufferString("test\n")
+		output := new(bytes.Buffer)
+		go StartRepl(ctx, input, output, cliCommands)
+
+		time.Sleep(100 * time.Millisecond)
+		text, _ := io.ReadAll(output)
+		assert.Equal(t, "pokedex > error: test error\npokedex > ", string(text))
 	})
 }
 
