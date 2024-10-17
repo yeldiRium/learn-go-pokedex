@@ -29,11 +29,11 @@ func InspectCommand(config *CliConfig, arguments []string) error {
 		fmt.Fprintf(config.output, "  - %s\n", pokemonType)
 	}
 	fmt.Fprintf(config.output, "Stats:\n")
-	fmt.Fprintf(config.output, "  - HP     : %3d\n", pokemon.BaseStats.Hp)
-	fmt.Fprintf(config.output, "  - Attack : %3d\n", pokemon.BaseStats.Attack)
-	fmt.Fprintf(config.output, "  - Defense: %3d\n", pokemon.BaseStats.Defense)
-	fmt.Fprintf(config.output, "  - Special Attack: %3d\n", pokemon.BaseStats.SpecialAttack)
+	fmt.Fprintf(config.output, "  - HP             : %3d\n", pokemon.BaseStats.Hp)
+	fmt.Fprintf(config.output, "  - Attack         : %3d\n", pokemon.BaseStats.Attack)
+	fmt.Fprintf(config.output, "  - Defense        : %3d\n", pokemon.BaseStats.Defense)
+	fmt.Fprintf(config.output, "  - Special Attack : %3d\n", pokemon.BaseStats.SpecialAttack)
 	fmt.Fprintf(config.output, "  - Special Defense: %3d\n", pokemon.BaseStats.SpecialDefense)
-	fmt.Fprintf(config.output, "  - Speed: %3d\n", pokemon.BaseStats.Speed)
+	fmt.Fprintf(config.output, "  - Speed          : %3d\n", pokemon.BaseStats.Speed)
 	return nil
 }
