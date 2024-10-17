@@ -20,6 +20,9 @@ func ExploreCommand(config *CliConfig, arguments []string) error {
 
 	foundPokemon, err := pokeapi.GetPokemonInArea(config.httpClient, config.cache, areaName)
 	if err != nil {
+		if errors.Is(err, pokeapi.ErrAreaDoesntExist) {
+			fmt.Fprintf(config.output, "Area '%s' does not exist. Try to find one using the 'map' and 'mapb' commands!\n", areaName)
+		}
 		return fmt.Errorf("%w: %w", ErrExploreFailed, err)
 	}
 
