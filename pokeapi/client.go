@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+
+	"github.com/yeldiRium/learning-go-pokedex/pokecache"
 )
 
 var ErrAreaListRequestInvalid = errors.New("failed to create area list request")
@@ -34,24 +36,29 @@ type areaListApiResponse struct {
 	} `json:"results"`
 }
 
-func GetAreaList(httpClient HttpClient, areaUrl string) (*AreaListResult, error) {
-	request, err := http.NewRequest("GET", areaUrl, nil)
-	if err != nil {
-		return nil, fmt.Errorf("%w: %w", ErrAreaListRequestInvalid, err)
-	}
-	response, err := httpClient.Do(request)
-	if err != nil {
-		return nil, fmt.Errorf("%w: %w", ErrAreaListRequestFailed, err)
-	}
+func GetAreaList(httpClient HttpClient, cache pokecache.Cache, areaUrl string) (*AreaListResult, error) {
+	responseBody, ok := cache.GetEntry(areaUrl)
+	if !ok {
+		request, err := http.NewRequest("GET", areaUrl, nil)
+		if err != nil {
+			return nil, fmt.Errorf("%w: %w", ErrAreaListRequestInvalid, err)
+		}
+		response, err := httpClient.Do(request)
+		if err != nil {
+			return nil, fmt.Errorf("%w: %w", ErrAreaListRequestFailed, err)
+		}
 
-	defer response.Body.Close()
-	body, err := io.ReadAll(response.Body)
-	if err != nil {
-		return nil, fmt.Errorf("%w: %w", ErrAreaListRequestFailed, err)
+		defer response.Body.Close()
+		body, err := io.ReadAll(response.Body)
+		if err != nil {
+			return nil, fmt.Errorf("%w: %w", ErrAreaListRequestFailed, err)
+		}
+
+		responseBody = body
 	}
 
 	var apiResponse areaListApiResponse
-	err = json.Unmarshal(body, &apiResponse)
+	err := json.Unmarshal(responseBody, &apiResponse)
 	if err != nil {
 		return nil, fmt.Errorf("%w: %w", ErrAreaListRequestFailed, err)
 	}

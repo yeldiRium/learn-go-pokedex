@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/yeldiRium/learning-go-pokedex/pokeapi"
+	"github.com/yeldiRium/learning-go-pokedex/pokecache"
 )
 
 type HttpClient interface {
@@ -14,6 +15,7 @@ type HttpClient interface {
 type CliConfig struct {
 	output     io.Writer
 	httpClient HttpClient
+	cache      pokecache.Cache
 
 	nextMapUrl     *string
 	previousMapUrl *string

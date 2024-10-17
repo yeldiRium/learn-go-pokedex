@@ -15,7 +15,7 @@ func MapCommand(config *CliConfig) error {
 		return ErrEndOfAreasReached
 	}
 
-	result, err := pokeapi.GetAreaList(config.httpClient, *config.nextMapUrl)
+	result, err := pokeapi.GetAreaList(config.httpClient, config.cache, *config.nextMapUrl)
 	if err != nil {
 		return fmt.Errorf("%w: %w", ErrNextMapRequestFailed, err)
 	}

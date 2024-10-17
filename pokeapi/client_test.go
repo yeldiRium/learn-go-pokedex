@@ -10,6 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/yeldiRium/learning-go-pokedex/pokeapi"
+	"github.com/yeldiRium/learning-go-pokedex/pokecache"
 )
 
 type mockHttpClient struct {
@@ -27,7 +28,8 @@ func (c *mockHttpClient) Do(req *http.Request) (*http.Response, error) {
 
 func TestGetAreaList(t *testing.T) {
 	t.Run("returns an error if the given URL is invalid", func(t *testing.T) {
-		_, err := pokeapi.GetAreaList(http.DefaultClient, "::/-_([>&}invalid-urld>-_[}]")
+		cache := pokecache.Cache{}
+		_, err := pokeapi.GetAreaList(http.DefaultClient, cache, "::/-_([>&}invalid-urld>-_[}]")
 		assert.ErrorIs(t, err, pokeapi.ErrAreaListRequestInvalid)
 	})
 
@@ -35,8 +37,9 @@ func TestGetAreaList(t *testing.T) {
 		client := mockHttpClient{
 			shouldError: fmt.Errorf("test error"),
 		}
+		cache := pokecache.Cache{}
 
-		_, err := pokeapi.GetAreaList(&client, "http://test-url/")
+		_, err := pokeapi.GetAreaList(&client, cache, "http://test-url/")
 		assert.ErrorIs(t, err, pokeapi.ErrAreaListRequestFailed)
 	})
 
@@ -44,8 +47,9 @@ func TestGetAreaList(t *testing.T) {
 		client := mockHttpClient{
 			shouldReturn: []byte("invalid-json"),
 		}
+		cache := pokecache.Cache{}
 
-		_, err := pokeapi.GetAreaList(&client, "http://test-url/")
+		_, err := pokeapi.GetAreaList(&client, cache, "http://test-url/")
 		assert.ErrorIs(t, err, pokeapi.ErrAreaListRequestFailed)
 	})
 }

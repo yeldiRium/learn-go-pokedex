@@ -15,7 +15,7 @@ func MapbCommand(config *CliConfig) error {
 		return ErrBeginningOfAreasReached
 	}
 
-	result, err := pokeapi.GetAreaList(config.httpClient, *config.previousMapUrl)
+	result, err := pokeapi.GetAreaList(config.httpClient, config.cache, *config.previousMapUrl)
 	if err != nil {
 		return fmt.Errorf("%w: %w", ErrPreviousMapRequestFailed, err)
 	}
