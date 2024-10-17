@@ -61,7 +61,7 @@ func StartRepl(ctx context.Context, input io.Reader, output io.Writer, cliComman
 				continue
 			}
 
-			err := cliCommand.Handler(cliState)
+			err := cliCommand.Handler(cliState, cleanedInput[1:])
 			if err != nil {
 				fmt.Fprintf(output, "error: %s\n", err)
 			}

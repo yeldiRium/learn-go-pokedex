@@ -20,7 +20,7 @@ func TestMapCommand(t *testing.T) {
 			WithHttpClient(&client).
 			WithOutput(buf)
 
-		err := commands.MapCommand(config)
+		err := commands.MapCommand(config, []string{})
 		assert.NoErrorf(t, err, "map command should not have returned an error")
 
 		assert.Equal(t, []string{"https://pokeapi.co/api/v2/location-area/?limit=20"}, client.wasCalledWithUrls)
@@ -34,8 +34,8 @@ func TestMapCommand(t *testing.T) {
 		config := commands.NewCliConfig().
 			WithHttpClient(&client)
 
-		commands.MapCommand(config)
-		err := commands.MapCommand(config)
+		commands.MapCommand(config, []string{})
+		err := commands.MapCommand(config, []string{})
 		assert.NoErrorf(t, err, "map command should not have returned an error")
 
 		assert.Equal(t, []string{"https://pokeapi.co/api/v2/location-area/?limit=20", "http://test-next-url/"}, client.wasCalledWithUrls)
@@ -48,7 +48,7 @@ func TestMapCommand(t *testing.T) {
 		config := commands.NewCliConfig().
 			WithHttpClient(&client)
 
-		err := commands.MapCommand(config)
+		err := commands.MapCommand(config, []string{})
 		assert.ErrorIs(t, err, commands.ErrNextMapRequestFailed)
 	})
 
@@ -59,7 +59,7 @@ func TestMapCommand(t *testing.T) {
 		config := commands.NewCliConfig().
 			WithHttpClient(&client)
 
-		err := commands.MapCommand(config)
+		err := commands.MapCommand(config, []string{})
 		assert.ErrorIs(t, err, commands.ErrNextMapRequestFailed)
 	})
 
@@ -71,8 +71,8 @@ func TestMapCommand(t *testing.T) {
 			WithHttpClient(&client).
 			WithNextMapUrl("https://current-map-url/")
 
-		commands.MapCommand(config)
-		err := commands.MapCommand(config)
+		commands.MapCommand(config, []string{})
+		err := commands.MapCommand(config, []string{})
 		assert.ErrorIs(t, err, commands.ErrEndOfAreasReached)
 	})
 }

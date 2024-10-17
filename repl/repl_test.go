@@ -21,7 +21,7 @@ func TestStartRepl(t *testing.T) {
 		var handlerCalled bool
 		cliCommands := map[string]commands.CliCommand{
 			"test": {
-				Handler: func(_ *commands.CliConfig) error {
+				Handler: func(_ *commands.CliConfig, _ []string) error {
 					handlerCalled = true
 					return nil
 				},
@@ -44,7 +44,7 @@ func TestStartRepl(t *testing.T) {
 		var handlerCalled bool
 		cliCommands := map[string]commands.CliCommand{
 			"test": {
-				Handler: func(_ *commands.CliConfig) error {
+				Handler: func(_ *commands.CliConfig, _ []string) error {
 					handlerCalled = true
 					return nil
 				},
@@ -66,7 +66,7 @@ func TestStartRepl(t *testing.T) {
 
 		cliCommands := map[string]commands.CliCommand{
 			"test": {
-				Handler: func(_ *commands.CliConfig) error {
+				Handler: func(_ *commands.CliConfig, _ []string) error {
 					return errors.New("test error")
 				},
 			},

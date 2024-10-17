@@ -3,7 +3,7 @@ package commands
 type CliCommand struct {
 	Name        string
 	Description string
-	Handler     func(*CliConfig) error
+	Handler     func(config *CliConfig, arguments []string) error
 }
 
 func GetCommands() map[string]CliCommand {
@@ -22,6 +22,11 @@ func GetCommands() map[string]CliCommand {
 			Name:        "mapb",
 			Description: "Shows the previous area of the map.",
 			Handler:     MapbCommand,
+		},
+		"explore": {
+			Name:        "explore <area>",
+			Description: "Explore an area",
+			Handler:     ExploreCommand,
 		},
 		"exit": {
 			Name:        "exit",

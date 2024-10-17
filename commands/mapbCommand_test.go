@@ -20,7 +20,7 @@ func TestMapbCommand(t *testing.T) {
 			WithHttpClient(&client).
 			WithOutput(buf)
 
-		err := commands.MapbCommand(config)
+		err := commands.MapbCommand(config, []string{})
 		assert.ErrorIs(t, err, commands.ErrBeginningOfAreasReached)
 	})
 
@@ -32,8 +32,8 @@ func TestMapbCommand(t *testing.T) {
 			WithHttpClient(&client).
 			WithPreviousMapUrl("http://test-current-previous-map-url/")
 
-		commands.MapbCommand(config)
-		err := commands.MapbCommand(config)
+		commands.MapbCommand(config, []string{})
+		err := commands.MapbCommand(config, []string{})
 		assert.NoErrorf(t, err, "mapb command should not have returned an error")
 
 		assert.Equal(t, []string{"http://test-current-previous-map-url/", "http://test-next-previous-map-url/"}, client.wasCalledWithUrls)
@@ -47,7 +47,7 @@ func TestMapbCommand(t *testing.T) {
 			WithHttpClient(&client).
 			WithPreviousMapUrl("http://previous-map-url/")
 
-		err := commands.MapbCommand(config)
+		err := commands.MapbCommand(config, []string{})
 		assert.ErrorIs(t, err, commands.ErrPreviousMapRequestFailed)
 	})
 
@@ -59,14 +59,14 @@ func TestMapbCommand(t *testing.T) {
 			WithHttpClient(&client).
 			WithPreviousMapUrl("http://previous-map-url/")
 
-		err := commands.MapbCommand(config)
+		err := commands.MapbCommand(config, []string{})
 		assert.ErrorIs(t, err, commands.ErrPreviousMapRequestFailed)
 	})
 
 	t.Run("returns an error when it can't go further back", func(t *testing.T) {
 		config := commands.NewCliConfig()
 
-		err := commands.MapbCommand(config)
+		err := commands.MapbCommand(config, []string{})
 		assert.ErrorIs(t, err, commands.ErrBeginningOfAreasReached)
 	})
 }

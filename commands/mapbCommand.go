@@ -10,7 +10,7 @@ import (
 var ErrPreviousMapRequestFailed = errors.New("failed to request previous map section")
 var ErrBeginningOfAreasReached = errors.New("beginning of areas reached, can't go further back")
 
-func MapbCommand(config *CliConfig) error {
+func MapbCommand(config *CliConfig, _ []string) error {
 	if config.previousMapUrl == nil {
 		return ErrBeginningOfAreasReached
 	}

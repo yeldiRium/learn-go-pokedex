@@ -11,6 +11,23 @@ import (
 )
 
 func TestGetAreaList(t *testing.T) {
+	t.Run("requests an area list section and returns the found areas and pagination", func(t *testing.T) {
+		client := mockHttpClient{
+			shouldReturn: []byte(`{"next": "http://test-next-url/", "results": [{"name": "area1"}, {"name": "area2"}]}`),
+		}
+		cache := pokecache.Cache{}
+		result, err := pokeapi.GetAreaList(&client, cache, "https://whatever/")
+		assert.NoError(t, err)
+		nextAreaUrl := "http://test-next-url/"
+		assert.Equal(t, &pokeapi.AreaListResult{
+			NextAreaUrl:     &nextAreaUrl,
+			PreviousAreaUrl: nil,
+			Areas: []pokeapi.Area{
+				{Name: "area1"},
+				{Name: "area2"},
+			},
+		}, result)
+	})
 	t.Run("returns an error if the given URL is invalid", func(t *testing.T) {
 		cache := pokecache.Cache{}
 		_, err := pokeapi.GetAreaList(http.DefaultClient, cache, "::/-_([>&}invalid-urld>-_[}]")

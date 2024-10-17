@@ -10,7 +10,7 @@ import (
 var ErrNextMapRequestFailed = errors.New("failed to request next map section")
 var ErrEndOfAreasReached = errors.New("end of areas reached, can't go further")
 
-func MapCommand(config *CliConfig) error {
+func MapCommand(config *CliConfig, _ []string) error {
 	if config.nextMapUrl == nil {
 		return ErrEndOfAreasReached
 	}
