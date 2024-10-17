@@ -43,7 +43,10 @@ func MapCommand(state *CliConfig) error {
 	}
 
 	var mapResponse MapResponse
-	json.Unmarshal(body, &mapResponse)
+	err = json.Unmarshal(body, &mapResponse)
+	if err != nil {
+		return fmt.Errorf("%w: %w", ErrNextMapRequestFailed, err)
+	}
 
 	state.nextMapUrl = mapResponse.Next
 	state.previousMapUrl = mapResponse.Previous

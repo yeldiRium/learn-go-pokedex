@@ -24,6 +24,12 @@ func NewCliConfig() *CliConfig {
 	}
 }
 
-func (c *CliConfig) WithHttpClient(httpClient HttpClient) {
+func (c *CliConfig) WithHttpClient(httpClient HttpClient) *CliConfig {
 	c.httpClient = httpClient
+	return c
+}
+
+func (c *CliConfig) WithOutput(output io.Writer) *CliConfig {
+	c.output = output
+	return c
 }
