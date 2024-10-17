@@ -3,27 +3,12 @@ package commands_test
 import (
 	"bytes"
 	"fmt"
-	"io"
-	"net/http"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 
 	"github.com/yeldiRium/learning-go-pokedex/commands"
 )
-
-type mockHttpClient struct {
-	wasCalledWithUrls []string
-	shouldReturn      []byte
-	shouldError       error
-}
-
-func (c *mockHttpClient) Do(req *http.Request) (*http.Response, error) {
-	c.wasCalledWithUrls = append(c.wasCalledWithUrls, req.URL.String())
-	return &http.Response{
-		Body: io.NopCloser(bytes.NewReader(c.shouldReturn)),
-	}, c.shouldError
-}
 
 func TestMapCommand(t *testing.T) {
 	t.Run("initially requests the first page and prints all found areas", func(t *testing.T) {
