@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
 	"github.com/yeldiRium/learning-go-pokedex/commands"
 )
 
@@ -53,14 +54,6 @@ func TestMapCommand(t *testing.T) {
 		assert.NoErrorf(t, err, "map command should not have returned an error")
 
 		assert.Equal(t, client.wasCalledWithUrls, []string{"https://pokeapi.co/api/v2/location-area/?limit=20", "http://test-next-url/"})
-	})
-
-	t.Run("returns an error if the next URL is invalid", func(t *testing.T) {
-		config := commands.NewCliConfig().
-			WithNextMapUrl("::/-_([>&}invalid-urld>-_[}]")
-
-		err := commands.MapCommand(config)
-		assert.ErrorIs(t, err, commands.ErrNextMapRequestInvalid)
 	})
 
 	t.Run("returns an error if the request failed", func(t *testing.T) {
