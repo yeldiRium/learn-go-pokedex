@@ -38,6 +38,11 @@ func GetCommands() map[string]CliCommand {
 			Description: "Look at your pokedex entry for a pokemon.",
 			Handler:     InspectCommand,
 		},
+		"pokedex": {
+			Name:        "pokedex",
+			Description: "Show all caught pokemon.",
+			Handler:     PokedexCommand,
+		},
 		"exit": {
 			Name:        "exit",
 			Description: "Exit the pokedex.",
