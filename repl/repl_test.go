@@ -56,3 +56,35 @@ func TestStartRepl(t *testing.T) {
 		}, 100*time.Millisecond, 20*time.Millisecond, "Handler was executed, but should not have been.")
 	})
 }
+
+func TestCleanInput(t *testing.T) {
+	cases := []struct {
+		name           string
+		input          string
+		expectedOutput []string
+	}{
+		{
+			name:           "Should ignore empty input",
+			input:          "   ",
+			expectedOutput: []string{},
+		},
+		{
+			name:           "Should clean up whitespace",
+			input:          "  test ",
+			expectedOutput: []string{"test"},
+		},
+		{
+			name:           "Should split input into words",
+			input:          "test arg1 arg2",
+			expectedOutput: []string{"test", "arg1", "arg2"},
+		},
+	}
+
+	for _, testCase := range cases {
+		t.Run(testCase.name, func(t *testing.T) {
+			output := cleanInput(testCase.input)
+
+			assert.Equal(t, testCase.expectedOutput, output)
+		})
+	}
+}

@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"strings"
 
 	"github.com/yeldiRium/learning-go-pokedex/commands"
 )
@@ -15,6 +16,20 @@ func scanReader(input io.Reader, lines chan string) {
 		lines <- scanner.Text()
 	}
 	close(lines)
+}
+
+func cleanInput(input string) (words []string) {
+	output := strings.Split(input, " ")
+
+	outputWithoutEmptyWords := []string{}
+	for _, word := range output {
+		if word == "" {
+			continue
+		}
+		outputWithoutEmptyWords = append(outputWithoutEmptyWords, word)
+	}
+
+	return outputWithoutEmptyWords
 }
 
 func StartRepl(ctx context.Context, input io.Reader, cliCommands map[string]commands.CliCommand) {
@@ -32,12 +47,20 @@ func StartRepl(ctx context.Context, input io.Reader, cliCommands map[string]comm
 				return
 			}
 
-			command, exists := cliCommands[line]
+			cleanedInput := cleanInput(line)
+
+			if len(cleanedInput) == 0 {
+				continue
+			}
+
+			commandName := cleanedInput[0]
+
+			cliCommand, exists := cliCommands[commandName]
 			if !exists {
 				continue
 			}
 
-			command.Handler()
+			cliCommand.Handler()
 		}
 	}
 }
